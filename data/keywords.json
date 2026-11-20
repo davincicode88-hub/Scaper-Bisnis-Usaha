@@ -1,0 +1,22 @@
+{
+  "Perdagangan & Sembako": ["toko sembako", "toko kelontong", "warung sembako", "grosir sembako", "distributor sembako", "agen sembako", "toko beras", "grosir beras", "toko gula", "toko minyak goreng", "toko telur", "toko sayuran", "toko buah", "toko daging", "toko frozen food", "toko plastik", "toko kebutuhan pokok", "toko alat rumah tangga", "minimarket", "supermarket"],
+  "Makanan & Minuman": ["warung makan", "rumah makan", "restoran", "warung nasi", "bakso", "mie ayam", "soto", "sate", "pecel", "warung kopi", "coffee shop", "kedai minuman", "angkringan", "katering", "jasa boga", "toko roti", "toko kue", "jajanan pasar", "gorengan", "snack", "kuliner"],
+  "Pertanian": ["toko pupuk", "distributor pupuk", "toko pestisida", "toko pertanian", "toko benih", "alat pertanian", "penggilingan padi", "penggilingan beras", "pengepul gabah", "pengepul hasil pertanian", "supplier sayuran", "toko pakan tanaman"],
+  "Peternakan": ["peternakan ayam", "peternakan sapi", "peternakan kambing", "peternakan bebek", "toko pakan ternak", "supplier pakan", "bibit ayam", "pengepul telur", "jual kambing", "jual sapi"],
+  "Perikanan": ["budidaya lele", "budidaya ikan", "kolam ikan", "toko ikan", "pengepul ikan", "pakan ikan", "benih ikan", "pemancingan"],
+  "Kesehatan": ["apotek", "apotik", "toko obat", "klinik", "dokter", "dokter gigi", "laboratorium", "praktik bidan", "puskesmas", "optik", "toko alat kesehatan"],
+  "Otomotif": ["bengkel motor", "bengkel mobil", "toko sparepart", "spare part motor", "tambal ban", "cuci motor", "cuci mobil", "dealer motor", "dealer mobil", "variasi motor", "servis kendaraan"],
+  "Bangunan & Material": ["toko bangunan", "material bangunan", "toko besi", "toko cat", "toko keramik", "toko listrik", "toko pipa", "supplier pasir", "supplier batu", "bahan bangunan", "kontraktor", "jasa konstruksi"],
+  "Elektronik": ["toko elektronik", "servis elektronik", "toko peralatan rumah tangga", "toko komputer", "servis komputer", "toko laptop", "printer", "servis printer"],
+  "Handphone & Telekomunikasi": ["konter hp", "counter handphone", "toko handphone", "toko pulsa", "paket data", "aksesoris hp", "servis hp", "konter pulsa"],
+  "Pakaian & Tekstil": ["toko pakaian", "butik", "distro", "konveksi", "toko kain", "penjahit", "toko sepatu", "toko sandal", "toko tas", "seragam"],
+  "Kecantikan & Perawatan": ["salon", "barbershop", "pangkas rambut", "klinik kecantikan", "toko kosmetik", "skincare", "spa", "make up"],
+  "Pendidikan": ["bimbingan belajar", "bimbel", "tempat les", "kursus", "lembaga pendidikan", "taman kanak-kanak", "sekolah", "paud", "pelatihan"],
+  "Jasa Rumah Tangga & Personal": ["laundry", "penatu", "jasa jahit", "servis ac", "jasa elektronik", "fotografi", "salon", "jasa kebersihan", "jasa katering", "percetakan", "fotokopi"],
+  "Transportasi & Logistik": ["rental mobil", "rental motor", "travel", "ekspedisi", "kurir", "agen paket", "angkutan", "jasa pindahan", "logistik"],
+  "Properti & Profesional": ["agen properti", "developer perumahan", "notaris", "arsitek", "konsultan", "kantor hukum", "jasa desain", "persewaan"],
+  "Industri & Produksi": ["pabrik tahu", "pabrik tempe", "industri makanan", "industri keripik", "produsen kerupuk", "pengolahan kayu", "mebel", "furnitur", "konveksi", "pabrik roti", "home industry", "industri rumah tangga"],
+  "Keuangan & Asuransi": ["koperasi", "pegadaian", "asuransi", "lembaga pembiayaan", "jasa keuangan", "atm", "bank"],
+  "Akomodasi & Pariwisata": ["hotel", "penginapan", "homestay", "losmen", "guest house", "wisata", "tempat rekreasi", "villa"],
+  "Lainnya": ["toko", "jasa", "usaha", "supplier", "distributor", "agen", "grosir", "produsen", "perusahaan"]
+}

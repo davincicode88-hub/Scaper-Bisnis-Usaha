@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Business Area Scraper</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <style>
+    :root{--blue:#175cd3;--ink:#182230;--muted:#667085;--line:#e4e7ec;--bg:#f7f9fc;--green:#067647}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px/1.5 Inter,system-ui,Arial,sans-serif;color:var(--ink)}
+    header{background:#102a43;color:white;padding:22px max(20px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px}
+    header h1{font-size:22px;margin:0}header p{margin:3px 0 0;color:#cbd5e1}.wrap{max-width:1180px;margin:22px auto;padding:0 18px}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 2px 8px #10182808}
+    h2{font-size:17px;margin:0 0 12px}.muted{color:var(--muted)}label{display:block;font-weight:600;margin:12px 0 5px}input,select{width:100%;padding:11px 12px;border:1px solid #cfd4dc;border-radius:9px;font:inherit;background:white}
+    .row{display:grid;grid-template-columns:1fr 130px;gap:10px}.btn{border:0;background:var(--blue);color:white;border-radius:9px;padding:11px 15px;font-weight:650;cursor:pointer}.btn:disabled{opacity:.55;cursor:wait}.btn.secondary{background:#eef4ff;color:#1849a9}.btn.green{background:var(--green)}
+    #map{height:360px;border-radius:10px;border:1px solid var(--line);margin-top:12px}.pill{display:inline-block;padding:4px 9px;border-radius:30px;background:#eff8ff;color:#175cd3;font-size:12px;font-weight:650}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.metric{background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:10px}.metric strong{font-size:22px;display:block}
+    .categories{display:grid;grid-template-columns:1fr 1fr;gap:7px;max-height:310px;overflow:auto}.cat{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px}.status{margin-top:12px;padding:12px;border-radius:9px;background:#f2f4f7;white-space:pre-wrap}.status.error{background:#fef3f2;color:#b42318}.status.ok{background:#ecfdf3;color:#067647}
+    table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line)}th{color:#475467;background:#f9fafb}.history{overflow:auto}
+    footer{max-width:1180px;margin:18px auto 35px;padding:0 18px;color:var(--muted);font-size:12px}.small{font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    @media(max-width:850px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}header{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<header><div><h1>Business Area Scraper</h1><p>Database usaha berdasarkan titik lokasi dan radius</p></div><span class="pill">Versi 1.0 · Gratis / OpenStreetMap</span></header>
+<div class="wrap">
+  <div class="grid">
+    <section class="card">
+      <h2>1. Pengaturan pencarian</h2>
+      <label for="center">Titik pusat pencarian</label>
+      <div class="row"><input id="center" value="{{ default_center }}" placeholder="Nama lokasi atau alamat"><button class="btn secondary" id="locate">Cari titik</button></div>
+      <div class="row"><div><label for="radius">Radius pencarian (km)</label><input id="radius" type="number" min="0.2" max="50" step="0.5" value="{{ default_radius }}"></div><div><label>&nbsp;</label><button class="btn" id="run" style="width:100%">Mulai scraping</button></div></div>
+      <div id="map"></div>
+      <p class="muted small">Klik peta untuk memindahkan titik pusat. Lingkaran menunjukkan radius pencarian. Lokasi awal perlu dicari satu kali melalui tombol “Cari titik”.</p>
+      <div id="status" class="status">Siap. Cari titik pusat atau gunakan lokasi Pasar Mandiraja yang sudah terisi.</div>
+      <div class="metrics"><div class="metric"><span class="muted small">Hasil terakhir</span><strong id="total">—</strong></div><div class="metric"><span class="muted small">Kategori terisi</span><strong id="cats">—</strong></div><div class="metric"><span class="muted small">Radius</span><strong id="radiusMetric">10 km</strong></div></div>
+      <div class="actions"><a id="download" class="btn green" style="display:none;text-decoration:none" href="#">Download Excel</a><button id="showResults" class="btn secondary" style="display:none">Lihat hasil</button></div>
+    </section>
+    <section class="card">
+      <h2>2. Kategori & master keyword</h2>
+      <p class="muted small">20 kategori dan variasi keyword tersedia. Data OSM diklasifikasikan berdasarkan tag dan nama tempat; keyword disediakan sebagai master pengembangan dan pemeriksaan.</p>
+      <div class="categories">
+        {% for category in categories %}<div class="cat"><strong>{{ category }}</strong><br><span class="muted">{{ keyword_counts[category] }} keyword</span></div>{% endfor %}
+      </div>
+      <div class="status small"><strong>Sumber aktif:</strong> OpenStreetMap / Overpass API.<br><strong>Geocoding:</strong> Nominatim, hanya untuk pencarian titik yang diminta pengguna.<br><strong>Google Maps, Google Search, Facebook:</strong> tidak aktif pada paket gratis ini karena tidak tersedia API umum gratis tanpa batas/izin yang sesuai.</div>
+    </section>
+  </div>
+  <section class="card" style="margin-top:18px">
+    <h2>3. Hasil pencarian</h2><div class="history" id="results"><p class="muted">Belum ada hasil. Jalankan pencarian untuk menampilkan data.</p></div>
+  </section>
+  <section class="card" style="margin-top:18px">
+    <h2>4. Riwayat pencarian</h2>
+    <div class="history"><table><thead><tr><th>ID</th><th>Titik pusat</th><th>Radius</th><th>Jumlah</th><th>Tanggal</th><th>Excel</th></tr></thead><tbody>
+    {% for s in recent %}<tr><td>{{ s.id }}</td><td>{{ s.display_name or s.center_name }}</td><td>{{ s.radius_km }} km</td><td>{{ s.result_count }}</td><td>{{ s.created_at }}</td><td><a href="/export/{{ s.id }}.xlsx">Unduh</a></td></tr>{% else %}<tr><td colspan="6" class="muted">Belum ada riwayat.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+</div>
+<footer>Data © OpenStreetMap contributors · Lisensi ODbL. Atribusi: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap copyright</a>. Peta menggunakan tile OpenStreetMap; penggunaan harus mengikuti kebijakan tile. Data yang tidak dicantumkan oleh kontributor OSM (misalnya nomor telepon) tidak dapat ditampilkan oleh aplikasi.</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+const statusEl=document.getElementById('status');let center=null,marker=null,circle=null,lastSearch=null;
+const map=L.map('map').setView([-7.45,109.55],11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+function setStatus(msg,type=''){statusEl.className='status '+type;statusEl.textContent=msg}
+function draw(){if(!center)return;const r=Number(document.getElementById('radius').value)*1000;if(marker)map.removeLayer(marker);if(circle)map.removeLayer(circle);marker=L.marker([center.lat,center.lon]).addTo(map).bindPopup('Titik pusat pencarian');circle=L.circle([center.lat,center.lon],{radius:r,color:'#175cd3',fillColor:'#60a5fa',fillOpacity:.12}).addTo(map);map.fitBounds(circle.getBounds());document.getElementById('radiusMetric').textContent=(r/1000)+' km'}
+map.on('click',e=>{center={lat:e.latlng.lat,lon:e.latlng.lng};document.getElementById('center').value=`Koordinat ${center.lat.toFixed(6)}, ${center.lon.toFixed(6)}`;draw();setStatus('Titik pusat dipindahkan melalui peta. Klik Mulai scraping untuk melanjutkan.','ok')});
+document.getElementById('radius').addEventListener('input',draw);
+document.getElementById('locate').onclick=async()=>{const q=document.getElementById('center').value.trim();setStatus('Mencari koordinat lokasi…');try{const r=await fetch('/api/geocode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q})});const d=await r.json();if(!r.ok)throw Error(d.error||'Geocoding gagal');center={lat:d.lat,lon:d.lon};document.getElementById('center').value=d.display_name;draw();setStatus(`Lokasi ditemukan:\n${d.display_name}\nKoordinat: ${d.lat}, ${d.lon}`,'ok')}catch(e){setStatus(e.message,'error')}};
+document.getElementById('run').onclick=async()=>{if(!center){document.getElementById('locate').click();setStatus('Tentukan titik pusat terlebih dahulu, lalu klik Mulai scraping.');return}const radius=Number(document.getElementById('radius').value);if(!(radius>0&&radius<=50)){setStatus('Radius harus lebih dari 0 dan maksimal 50 km.','error');return}const btn=document.getElementById('run');btn.disabled=true;btn.textContent='Sedang mencari…';setStatus('Menghubungi Overpass API. Pencarian area luas dapat memerlukan waktu dan server publik dapat sibuk. Jangan menekan tombol berulang kali.');try{const r=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({center_name:document.getElementById('center').value,latitude:center.lat,longitude:center.lon,radius_km:radius})});const d=await r.json();if(!r.ok)throw Error(d.error||'Pencarian gagal');lastSearch=d.search_id;document.getElementById('total').textContent=d.count;document.getElementById('cats').textContent=Object.keys(d.categories).length;document.getElementById('radiusMetric').textContent=radius+' km';document.getElementById('download').href=`/export/${lastSearch}.xlsx`;document.getElementById('download').style.display='inline-block';document.getElementById('showResults').style.display='inline-block';setStatus(`${d.message}\nTitik: ${d.center.name}\nDitemukan: ${d.count} entri.\nPencarian ID: ${lastSearch}`,'ok');await loadResults(lastSearch)}catch(e){setStatus(e.message,'error')}finally{btn.disabled=false;btn.textContent='Mulai scraping'}};
+async function loadResults(id){const r=await fetch(`/api/search/${id}`);const d=await r.json();const rows=d.businesses;const host=document.getElementById('results');if(!rows.length){host.innerHTML='<p class="muted">Tidak ada objek bernama yang cocok ditemukan dalam data OSM pada radius ini. Ini bukan bukti bahwa tidak ada usaha di wilayah tersebut.</p>';return}let html='<div class="history"><table><thead><tr><th>Nama usaha</th><th>Kategori</th><th>Alamat</th><th>Telepon</th><th>Website</th><th>Jarak</th><th>Lokasi</th></tr></thead><tbody>';for(const x of rows){const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));html+=`<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.category)}</td><td>${esc(x.address)}</td><td>${esc(x.phone)}</td><td>${x.website?`<a href="${esc(x.website)}" target="_blank" rel="noopener">Website</a>`:''}</td><td>${esc(x.distance_km)} km</td><td><a href="https://www.openstreetmap.org/?mlat=${x.latitude}&mlon=${x.longitude}#map=18/${x.latitude}/${x.longitude}" target="_blank" rel="noopener">Peta</a></td></tr>`}html+='</tbody></table></div>';host.innerHTML=html}
+document.getElementById('showResults').onclick=()=>lastSearch&&loadResults(lastSearch);
+</script>
+</body></html>
